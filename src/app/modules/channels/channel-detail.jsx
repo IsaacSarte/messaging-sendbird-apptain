@@ -2,13 +2,33 @@ import React, { useState } from 'react';
 import Channel from '@sendbird/uikit-react/Channel';
 import ChannelList from '@sendbird/uikit-react/ChannelList';
 import ChannelSettings from '@sendbird/uikit-react/ChannelSettings';
-import sendbirdSelectors from '@sendbird/uikit-react/sendbirdSelectors';
-import useSendbirdStateContext from '@sendbird/uikit-react/useSendbirdStateContext';
 import ChannelHeader from './channel-header';
+import { useChannels } from '@/app/hooks/channels/use-channels';
 
 const ChannelDetail = () => {
     const [showSettings, setShowSettings] = useState(false);
     const [currentChannelUrl, setCurrentChannelUrl] = useState(null);
+
+    const { updateChannelMessageCount } = useChannels();
+
+    // update message count function
+    const updateMessageCount = async () => {
+        updateChannelMessageCount(currentChannelUrl);
+    };
+    
+    // on before send user message function
+    const onBeforeSendUserMessage = (text) => {
+        updateMessageCount();
+        return { message: text };
+    };
+    
+    // on before sending file messages function
+    const onBeforeSendFileMessage = (file) => {
+        updateMessageCount();
+        return { file: file };
+    };
+
+    // classnames here are based on inspecting elements on Storybook
 
     return (
         <>
@@ -29,6 +49,8 @@ const ChannelDetail = () => {
                     <Channel
                         channelUrl={currentChannelUrl}
                         onChatHeaderActionClick={() => setShowSettings(true)}
+                        onBeforeSendUserMessage={onBeforeSendUserMessage}
+                        onBeforeSendFileMessage={onBeforeSendFileMessage}
                     />
                 </div>
 
