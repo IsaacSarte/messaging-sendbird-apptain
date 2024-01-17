@@ -1,5 +1,6 @@
 import prisma from '@/app/lib/db';
 import { NextResponse } from 'next/server';
+import { SENDBIRD_CREDENTIALS } from '@/app/utils/constants';
 
 export async function POST(req) {
     try {
@@ -14,12 +15,12 @@ export async function POST(req) {
 
         const headers = {
             'Content-Type': 'application/json',
-            'Api-Token': process.env.NEXT_PUBLIC_API_TOKEN,
+            'Api-Token': SENDBIRD_CREDENTIALS.APP_TOKEN,
         };
 
         if (userExists) {
             await fetch(
-                `https://api-${process.env.NEXT_PUBLIC_APP_ID}.sendbird.com/v3/users/${userExists.identifier}`,
+                `https://api-${SENDBIRD_CREDENTIALS.APP_ID}.sendbird.com/v3/users/${userExists.identifier}`,
                 {
                     method: 'PUT',
                     headers: headers,
@@ -49,7 +50,7 @@ export async function POST(req) {
         }
 
         const sendbirdResponse = await fetch(
-            `https://api-${process.env.NEXT_PUBLIC_APP_ID}.sendbird.com/v3/users`,
+            `https://api-${SENDBIRD_CREDENTIALS.APP_ID}.sendbird.com/v3/users`,
             {
                 method: 'POST',
                 headers: headers,
